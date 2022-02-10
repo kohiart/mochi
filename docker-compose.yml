@@ -1,0 +1,19 @@
+version: "3"
+
+services:  
+  mochi:
+    build: .
+    image: kohi/mochi
+    restart: unless-stopped
+    ports:
+      - "30303:30303"
+      - "30303:30303/udp"
+      - "8545:8545"
+      - "8546:8546"
+    stop_signal: SIGINT
+    stop_grace_period: 2m      
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"

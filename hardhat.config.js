@@ -2,6 +2,10 @@
  * @type import('hardhat/config').HardhatUserConfig
  */
 
+// See: https://hardhat.org/config/
+// See: https://docs.soliditylang.org/en/v0.7.4/using-the-compiler.html#input-description
+// See: https://hardhat.org/guides/compile-contracts.html
+
 require("@nomiclabs/hardhat-waffle");
 
 module.exports = {

@@ -7,6 +7,7 @@ RUN apt-get install -y wget
 RUN apt-get install -y make
 RUN apt-get install -y golang
 RUN apt-get install -y curl
+RUN apt-get install -y cmake
 
 RUN mkdir -p /client
 RUN chown root /client
@@ -21,10 +22,13 @@ RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN npm install -g npm@latest
-RUN npm install --save-dev "hardhat" "mocha" "chai" "@nomiclabs/hardhat-ethers@^2.0.0" "@nomiclabs/hardhat-waffle@^2.0.0" "ethers@^5.0.0" "ethereum-waffle@^3.2.0"
+RUN npm install --save-dev "hardhat" "mocha" "chai" "@nomiclabs/hardhat-waffle@^2.0.3" "@nomiclabs/hardhat-ethers@^2.0.0" "@nomiclabs/hardhat-waffle@^2.0.0" "ethers@^5.0.0" "ethereum-waffle@^3.2.0"
 
-# for testing `geth account import`
-COPY import.txt /client/geth-linux-amd64-1.9.2-evmc.6.3.0/import.txt
+# upload contracts for deployment
+ADD contracts contracts
+ADD test test
+COPY hardhat.config.js hardhat.config.js
+COPY .mocharc.json .mocharc.json
 
 # for initializing with our desired configuration
 COPY genesis.json /client/genesis.json
@@ -43,15 +47,20 @@ RUN make geth
 WORKDIR /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin
 
 # evmone is a fast EVM implementation we want to plug in to geth
-RUN wget -c https://github.com/ethereum/evmone/releases/download/v0.2.0/evmone-0.2.0-linux-x86_64.tar.gz -O - | tar -xz
+# RUN wget -c https://github.com/ethereum/evmone/releases/download/v0.2.0/evmone-0.2.0-linux-x86_64.tar.gz -O - | tar -xz
+COPY evmone-0.2.0 /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone
+WORKDIR /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone
+RUN cmake -S . -B build -DEVMONE_TESTING=OFF
+RUN cmake --build build --parallel
 
-ENV PATH="/client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin:${PATH}"
+ENV PATH="/client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin:/client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone:${PATH}"
 
 # initialize the geth node with our config data
 RUN geth init /client/genesis.json --datadir "/chaindata"
 
-COPY entrypoint.sh /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/entrypoint.sh
-COPY deploy.sh /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/deploy.sh
+WORKDIR /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin
+COPY entrypoint.sh entrypoint.sh
+COPY deploy.sh deploy.sh
 
 EXPOSE 8545 8546 30303 30303/udp 30304/udp
 STOPSIGNAL SIGINT

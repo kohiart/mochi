@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Kohi": {
+      "commandName": "Project",
+      "commandLineArgs": "render -t 1"
+    }
+  }
+}

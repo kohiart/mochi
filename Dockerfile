@@ -25,10 +25,10 @@ RUN npm install -g npm@latest
 RUN npm install --save-dev "hardhat" "mocha" "chai" "@nomiclabs/hardhat-waffle@^2.0.3" "@nomiclabs/hardhat-ethers@^2.0.0" "@nomiclabs/hardhat-waffle@^2.0.0" "ethers@^5.0.0" "ethereum-waffle@^3.2.0"
 
 # upload contracts for deployment
-ADD contracts contracts
-ADD test test
-COPY hardhat.config.js hardhat.config.js
-COPY .mocharc.json .mocharc.json
+ADD contracts /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone/contracts
+ADD test /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone/test
+COPY hardhat.config.js /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone/hardhat.config.js
+COPY .mocharc.json /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/evmone/.mocharc.json
 
 # for initializing with our desired configuration
 COPY genesis.json /client/genesis.json
@@ -57,10 +57,7 @@ ENV PATH="/client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin:/client/go-ethereum-1
 
 # initialize the geth node with our config data
 RUN geth init /client/genesis.json --datadir "/chaindata"
-
-WORKDIR /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin
-COPY entrypoint.sh entrypoint.sh
-COPY deploy.sh deploy.sh
+COPY entrypoint.sh /client/go-ethereum-1.9.2-evmc.6.3.0-0/build/bin/entrypoint.sh
 
 EXPOSE 8545 8546 30303 30303/udp 30304/udp
 STOPSIGNAL SIGINT

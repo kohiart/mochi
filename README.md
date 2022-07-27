@@ -17,7 +17,7 @@ Yes, at the moment rendering times are anywhere from four hours to nine days, de
 
 It won't always be this way.
 
-The intention for Kohi as a platform is to render these EVM pieces with a GPU, resulting in near real-time, and the ability to use EVM to make 3D artworks, and artworks with interactivity (using time as a medium).
+The intention for Kohi as a platform is to render these EVM pieces with a GPU, resulting in near real-time performance, and the ability to use EVM to make 3D artworks, and artworks with interactivity (using time as a medium).
 
 Right now, Mochi is required for our early works, but will phase out of existence when further tooling is shipped.
 

@@ -23,6 +23,6 @@ Right now, Mochi is required for our early works, but will phase out of existenc
 
 ## Getting Started
 
-- Install (Docker Desktop)[https://www.docker.com/products/docker-desktop]
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - Run `run.bat` to deploy contracts to the Docker node
 - Run `Kohi.exe`
